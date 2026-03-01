@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fertility_fl"
+version = "1.0.0"
+description = "Fertility Risk Prediction using Federated Learning"
+license = {text = "MIT"}
+dependencies = [
+    "flwr[simulation]==1.11.1",
+    "torch==2.1.0",
+    "numpy>=1.24.3",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.flwr.app]
+publisher = "your_name"
+
+[tool.flwr.app.components]
+serverapp = "fertility_fl.server_app:app"
+clientapp = "fertility_fl.client_app_dp:app"
+
+[tool.flwr.app.config]
+num-server-rounds = 10
+fraction-fit = 0.8
+fraction-evaluate = 0.5
+noise-multiplier = 1.0      # Add this
+max-grad-norm = 1.0 
+
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 5
+options.backend.client-resources.num-cpus = 2
+options.backend.client-resources.num-gpus = 0.0
